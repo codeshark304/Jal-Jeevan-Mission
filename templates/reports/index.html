@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Reports - Jal Jeevan Mission{% endblock %}
+
+{% block content %}
+<div class="content-container">
+    <h1 class="page-title">
+        <i class="fas fa-file-alt"></i> Reports
+    </h1>
+    
+    <div class="cards-container">
+        <div class="export-card">
+            <div class="export-icon">
+                <i class="fas fa-file-csv"></i>
+            </div>
+            <div class="export-content">
+                <h3 class="export-title">Export to CSV</h3>
+                <p class="export-description">Download data in CSV format for use in spreadsheet applications</p>
+                <a href="{{ url_for('reports.export_csv') }}" class="btn btn-primary">Download CSV</a>
+            </div>
+        </div>
+        
+        <div class="export-card">
+            <div class="export-icon">
+                <i class="fas fa-file-excel"></i>
+            </div>
+            <div class="export-content">
+                <h3 class="export-title">Export to Excel</h3>
+                <p class="export-description">Download data in Excel format with proper formatting</p>
+                <a href="{{ url_for('reports.export_excel') }}" class="btn btn-primary">Download Excel</a>
+            </div>
+        </div>
+        
+        <div class="export-card">
+            <div class="export-icon">
+                <i class="fas fa-file-alt"></i>
+            </div>
+            <div class="export-content">
+                <h3 class="export-title">Text Report</h3>
+                <p class="export-description">Generate a formatted text report with summary statistics</p>
+                <a href="{{ url_for('reports.generate_text') }}" class="btn btn-primary">Generate Report</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

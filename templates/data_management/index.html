@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Data Management - Jal Jeevan Mission{% endblock %}
+
+{% block content %}
+<div class="content-container">
+    <h1 class="page-title">
+        <i class="fas fa-database"></i> Data Management
+    </h1>
+    
+    <div class="grid-container">
+        <div class="grid-item">
+            <a href="{{ url_for('data_management.manage_states') }}" class="grid-link">
+                <div class="grid-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <div class="grid-title">Manage States/UTs</div>
+                <div class="grid-description">Add, edit, or remove states and union territories</div>
+            </a>
+        </div>
+        
+        <div class="grid-item">
+            <a href="{{ url_for('data_management.manage_household_stats') }}" class="grid-link">
+                <div class="grid-icon">
+                    <i class="fas fa-home"></i>
+                </div>
+                <div class="grid-title">Household Statistics</div>
+                <div class="grid-description">Manage rural household data and tap water coverage</div>
+            </a>
+        </div>
+        
+        <div class="grid-item">
+            <a href="{{ url_for('data_management.manage_water_connections') }}" class="grid-link">
+                <div class="grid-icon">
+                    <i class="fas fa-faucet"></i>
+                </div>
+                <div class="grid-title">Water Connections</div>
+                <div class="grid-description">Track tap water connections provided under JJM</div>
+            </a>
+        </div>
+        
+        <div class="grid-item">
+            <a href="{{ url_for('data_management.manage_historical_progress') }}" class="grid-link">
+                <div class="grid-icon">
+                    <i class="fas fa-history"></i>
+                </div>
+                <div class="grid-title">Historical Progress</div>
+                <div class="grid-description">Maintain historical data for trend analysis</div>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}Water Connections - Jal Jeevan Mission{% endblock %}
+
+{% block content %}
+<div class="content-container">
+    <h1 class="page-title">
+        <i class="fas fa-faucet"></i> Water Connections
+    </h1>
+    
+    <div class="section">
+        <h2 class="section-title">Add/Edit Water Connections</h2>
+        
+        <form method="POST" action="{{ url_for('data_management.manage_water_connections') }}" class="form">
+            {{ form.hidden_tag() }}
+            
+            <div class="form-group">
+                {{ form.state_id.label(class="form-label") }}
+                {{ form.state_id(class="form-control") }}
+                {% if form.state_id.errors %}
+                    <div class="form-error">
+                        {% for error in form.state_id.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                {{ form.tap_water_connections_provided.label(class="form-label") }}
+                {{ form.tap_water_connections_provided(class="form-control", placeholder="Enter number of tap water connections provided") }}
+                {% if form.tap_water_connections_provided.errors %}
+                    <div class="form-error">
+                        {% for error in form.tap_water_connections_provided.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                {{ form.tap_water_connections_provided_pct.label(class="form-label") }}
+                {{ form.tap_water_connections_provided_pct(class="form-control", placeholder="Enter percentage of target achieved") }}
+                {% if form.tap_water_connections_provided_pct.errors %}
+                    <div class="form-error">
+                        {% for error in form.tap_water_connections_provided_pct.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="form-actions">
+                {{ form.submit(class="btn btn-primary") }}
+            </div>
+        </form>
+    </div>
+    
+    <div class="section">
+        <h2 class="section-title">Existing Water Connections</h2>
+        
+        {% if connections %}
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>State/UT</th>
+                        <th>Tap Water Connections Provided</th>
+                        <th>Target Achievement (%)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for state_name, connection in connections %}
+                    <tr>
+                        <td>{{ state_name }}</td>
+                        <td>{{ '{:,}'.format(connection.tap_water_connections_provided) }}</td>
+                        <td>{{ '%.2f'|format(connection.tap_water_connections_provided_pct) }}%</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-message">
+            <i class="fas fa-info-circle"></i> No water connection data has been added yet.
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="back-link">
+        <a href="{{ url_for('data_management.index') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Data Management
+        </a>
+    </div>
+</div>
+{% endblock %}

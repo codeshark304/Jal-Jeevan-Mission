@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}Household Statistics - Jal Jeevan Mission{% endblock %}
+
+{% block content %}
+<div class="content-container">
+    <h1 class="page-title">
+        <i class="fas fa-home"></i> Household Statistics
+    </h1>
+    
+    <div class="section">
+        <h2 class="section-title">Add/Edit Household Statistics</h2>
+        
+        <form method="POST" action="{{ url_for('data_management.manage_household_stats') }}" class="form" id="householdStatsForm">
+            {{ form.hidden_tag() }}
+            
+            <div class="form-group">
+                {{ form.state_id.label(class="form-label") }}
+                {{ form.state_id(class="form-control") }}
+                {% if form.state_id.errors %}
+                    <div class="form-error">
+                        {% for error in form.state_id.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                {{ form.total_rural_households.label(class="form-label") }}
+                {{ form.total_rural_households(class="form-control", placeholder="Enter total number of rural households") }}
+                {% if form.total_rural_households.errors %}
+                    <div class="form-error">
+                        {% for error in form.total_rural_households.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                {{ form.households_with_tap_water_current.label(class="form-label") }}
+                {{ form.households_with_tap_water_current(class="form-control", placeholder="Enter number of households with tap water") }}
+                {% if form.households_with_tap_water_current.errors %}
+                    <div class="form-error">
+                        {% for error in form.households_with_tap_water_current.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="form-actions inline-buttons">
+                {{ form.calculate_percentage(class="btn btn-secondary", id="calculatePercentage") }}
+            </div>
+            
+            <div class="form-group">
+                {{ form.households_with_tap_water_current_pct.label(class="form-label") }}
+                {{ form.households_with_tap_water_current_pct(class="form-control", placeholder="Coverage percentage will be calculated") }}
+                {% if form.households_with_tap_water_current_pct.errors %}
+                    <div class="form-error">
+                        {% for error in form.households_with_tap_water_current_pct.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="form-actions">
+                {{ form.submit(class="btn btn-primary") }}
+            </div>
+        </form>
+    </div>
+    
+    <div class="section">
+        <h2 class="section-title">Existing Household Statistics</h2>
+        
+        {% if stats %}
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>State/UT</th>
+                        <th>Total Rural Households</th>
+                        <th>Households with Tap Water</th>
+                        <th>Coverage (%)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for state_name, stat in stats %}
+                    <tr>
+                        <td>{{ state_name }}</td>
+                        <td>{{ '{:,}'.format(stat.total_rural_households) }}</td>
+                        <td>{{ '{:,}'.format(stat.households_with_tap_water_current) }}</td>
+                        <td>{{ '%.2f'|format(stat.households_with_tap_water_current_pct) }}%</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-message">
+            <i class="fas fa-info-circle"></i> No household statistics have been added yet.
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="back-link">
+        <a href="{{ url_for('data_management.index') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Data Management
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Auto-calculate percentage when both fields are filled
+    $(document).ready(function() {
+        function calculatePercentage() {
+            const total = parseInt($('#total_rural_households').val()) || 0;
+            const current = parseInt($('#households_with_tap_water_current').val()) || 0;
+            
+            if (total > 0 && current >= 0) {
+                const percentage = (current / total) * 100;
+                $('#households_with_tap_water_current_pct').val(percentage.toFixed(2));
+            }
+        }
+        
+        // Calculate on button click
+        $('#calculatePercentage').click(function(e) {
+            e.preventDefault();
+            calculatePercentage();
+        });
+        
+        // Auto-calculate when input changes
+        $('#total_rural_households, #households_with_tap_water_current').change(function() {
+            calculatePercentage();
+        });
+    });
+</script>
+{% endblock %}

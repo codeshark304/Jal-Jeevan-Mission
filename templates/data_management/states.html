@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Manage States/UTs - Jal Jeevan Mission{% endblock %}
+
+{% block content %}
+<div class="content-container">
+    <h1 class="page-title">
+        <i class="fas fa-map-marker-alt"></i> Manage States/UTs
+    </h1>
+    
+    <div class="section">
+        <h2 class="section-title">Add New State/UT</h2>
+        
+        <form method="POST" action="{{ url_for('data_management.manage_states') }}" class="form">
+            {{ form.hidden_tag() }}
+            
+            <div class="form-group">
+                {{ form.state_name.label(class="form-label") }}
+                {{ form.state_name(class="form-control", placeholder="Enter state or union territory name") }}
+                {% if form.state_name.errors %}
+                    <div class="form-error">
+                        {% for error in form.state_name.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="form-actions">
+                {{ form.submit(class="btn btn-primary") }}
+            </div>
+        </form>
+    </div>
+    
+    <div class="section">
+        <h2 class="section-title">Existing States/UTs</h2>
+        
+        {% if states %}
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>State/UT Name</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for state in states %}
+                    <tr>
+                        <td>{{ state.state_id }}</td>
+                        <td>{{ state.state_name }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('data_management.delete_state', state_id=state.state_id) }}" class="delete-form" onsubmit="return confirm('Are you sure you want to delete {{ state.state_name }}? This will also delete all associated data.');">
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-message">
+            <i class="fas fa-info-circle"></i> No states or union territories have been added yet.
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="back-link">
+        <a href="{{ url_for('data_management.index') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Data Management
+        </a>
+    </div>
+</div>
+{% endblock %}

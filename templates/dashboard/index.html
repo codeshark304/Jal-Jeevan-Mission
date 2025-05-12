@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Jal Jeevan Mission{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <h1 class="page-title">
+        <i class="fas fa-chart-line"></i> Dashboard
+    </h1>
+    
+    <!-- Summary Cards -->
+    <div class="summary-cards">
+        <div class="card">
+            <div class="card-icon">
+                <i class="fas fa-home"></i>
+            </div>
+            <div class="card-content">
+                <div class="card-title">Total Rural Households</div>
+                <div class="card-value">{{ '{:,}'.format(stats.total_households|int) }}</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-icon">
+                <i class="fas fa-faucet"></i>
+            </div>
+            <div class="card-content">
+                <div class="card-title">Households with Tap Water</div>
+                <div class="card-value">{{ '{:,}'.format(stats.households_with_tap|int) }}</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-icon">
+                <i class="fas fa-percent"></i>
+            </div>
+            <div class="card-content">
+                <div class="card-title">Coverage Percentage</div>
+                <div class="card-value">{{ '%.2f'|format(stats.coverage_percentage) }}%</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-icon">
+                <i class="fas fa-water"></i>
+            </div>
+            <div class="card-content">
+                <div class="card-title">Connections Provided</div>
+                <div class="card-value">{{ '{:,}'.format(stats.connections_provided|int) }}</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Overall Progress Gauge -->
+    <div class="chart-container">
+        <div class="chart-title">Overall Progress</div>
+        <div id="gauge-chart" class="chart-content"></div>
+    </div>
+    
+    <!-- State-wise Progress Bar Chart -->
+    <div class="chart-container wide">
+        <div class="chart-title">State-wise Progress</div>
+        <div id="state-progress-chart" class="chart-content"></div>
+    </div>
+    
+    <!-- Top and Bottom States -->
+    <div class="chart-row">
+        <div class="chart-container half">
+            <div class="chart-title">Top Performing States</div>
+            <div id="top-states-chart" class="chart-content"></div>
+        </div>
+        
+        <div class="chart-container half">
+            <div class="chart-title">States Needing Attention</div>
+            <div id="bottom-states-chart" class="chart-content"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Parse JSON data for charts with error checking
+    let gaugeData = {}, stateProgressData = {}, topStatesData = {}, bottomStatesData = {};
+    
+    try {
+        gaugeData = JSON.parse('{{ gauge_data|safe }}');
+    } catch (e) {
+        console.error("Error parsing gauge data:", e);
+    }
+    
+    try {
+        stateProgressData = JSON.parse('{{ state_progress_data|safe }}');
+    } catch (e) {
+        console.error("Error parsing state progress data:", e);
+    }
+    
+    try {
+        topStatesData = JSON.parse('{{ top_states_data|safe }}');
+    } catch (e) {
+        console.error("Error parsing top states data:", e);
+    }
+    
+    try {
+        bottomStatesData = JSON.parse('{{ bottom_states_data|safe }}');
+    } catch (e) {
+        console.error("Error parsing bottom states data:", e);
+    }
+    
+    // Create charts with checks for empty data
+    if (gaugeData && gaugeData.data) {
+        Plotly.newPlot('gauge-chart', gaugeData.data, gaugeData.layout);
+    } else {
+        document.getElementById('gauge-chart').innerHTML = '<div class="chart-empty">No data available</div>';
+    }
+    
+    if (stateProgressData && stateProgressData.data) {
+        Plotly.newPlot('state-progress-chart', stateProgressData.data, stateProgressData.layout);
+    } else {
+        document.getElementById('state-progress-chart').innerHTML = '<div class="chart-empty">No data available</div>';
+    }
+    
+    if (topStatesData && topStatesData.data) {
+        Plotly.newPlot('top-states-chart', topStatesData.data, topStatesData.layout);
+    } else {
+        document.getElementById('top-states-chart').innerHTML = '<div class="chart-empty">No data available</div>';
+    }
+    
+    if (bottomStatesData && bottomStatesData.data) {
+        Plotly.newPlot('bottom-states-chart', bottomStatesData.data, bottomStatesData.layout);
+    } else {
+        document.getElementById('bottom-states-chart').innerHTML = '<div class="chart-empty">No data available</div>';
+    }
+    
+    // Make charts responsive
+    window.addEventListener('resize', function() {
+        if (gaugeData && gaugeData.data) {
+            Plotly.relayout('gauge-chart', {
+                'xaxis.autorange': true,
+                'yaxis.autorange': true
+            });
+        }
+        
+        if (stateProgressData && stateProgressData.data) {
+            Plotly.relayout('state-progress-chart', {
+                'xaxis.autorange': true,
+                'yaxis.autorange': true
+            });
+        }
+        
+        if (topStatesData && topStatesData.data) {
+            Plotly.relayout('top-states-chart', {
+                'xaxis.autorange': true,
+                'yaxis.autorange': true
+            });
+        }
+        
+        if (bottomStatesData && bottomStatesData.data) {
+            Plotly.relayout('bottom-states-chart', {
+                'xaxis.autorange': true,
+                'yaxis.autorange': true
+            });
+        }
+    });
+</script>
+{% endblock %}

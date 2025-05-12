@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Jal Jeevan Mission - Water Connection Monitoring{% endblock %}</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/x-icon">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    
+    <!-- Plotly.js for charts -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    {% if current_user.is_authenticated %}
+    <header>
+        <div class="header-container">
+            <div class="logo-container">
+                <a href="{{ url_for('dashboard.index') }}" class="logo">
+                    <i class="fas fa-water"></i>
+                    Jal Jeevan Mission
+                </a>
+            </div>
+            <div class="user-info">
+                <span class="user-name">{{ current_user.username }} ({{ current_user.role }})</span>
+                <form action="{{ url_for('auth.logout') }}" method="post">
+                    <button type="submit" class="logout-btn">Logout</button>
+                </form>
+            </div>
+        </div>
+    </header>
+    
+    <nav>
+        <div class="nav-container">
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="{{ url_for('dashboard.index') }}" class="nav-link {% if request.endpoint == 'dashboard.index' %}active{% endif %}">
+                        <i class="fas fa-chart-line"></i> Dashboard
+                    </a>
+                </li>
+                {% if current_user.role == 'admin' %}
+                <li class="nav-item">
+                    <a href="{{ url_for('data_management.index') }}" class="nav-link {% if request.endpoint.startswith('data_management') %}active{% endif %}">
+                        <i class="fas fa-database"></i> Data Management
+                    </a>
+                </li>
+                {% endif %}
+                <li class="nav-item">
+                    <a href="{{ url_for('reports.index') }}" class="nav-link {% if request.endpoint.startswith('reports') %}active{% endif %}">
+                        <i class="fas fa-file-alt"></i> Reports
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    {% endif %}
+    
+    <main>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html>
